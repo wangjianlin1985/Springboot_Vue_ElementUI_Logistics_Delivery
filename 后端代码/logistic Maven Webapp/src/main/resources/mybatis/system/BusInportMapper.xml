@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.logistic.project.system.mapper.BusInportMapper">
+    
+    <resultMap type="BusInport" id="BusInportResult">
+        <result property="id"    column="id"    />
+        <result property="paytype"    column="paytype"    />
+        <result property="inporttime"    column="inporttime"    />
+        <result property="operateperson"    column="operateperson"    />
+        <result property="number"    column="number"    />
+        <result property="remark"    column="remark"    />
+        <result property="inportprice"    column="inportprice"    />
+         
+        <result property="goodsid"    column="goodsid"    />
+     	<association property="busGoods"    column="goodsid" javaType="BusGoods" resultMap="goodResult" />
+    </resultMap>
+    
+    
+     <resultMap type="BusGoods" id="goodResult">
+        <result property="goodsname"    column="goodsname"    />
+    </resultMap>
+    
+
+    <sql id="selectBusInportVo">
+        select id, paytype, inporttime, operateperson, number, remark, inportprice, providerid, goodsid from bus_inport
+    </sql>
+
+    <select id="selectBusInportList" parameterType="BusInport" resultMap="BusInportResult">
+       SELECT bi.*,bg.goodsname  FROM bus_inport bi,bus_goods bg
+			 WHERE  bg.id = bi.goodsid
+        <where>  
+            <if test="inportprice != null "> and bi.inportprice = #{inportprice}</if>
+         
+            <if test="goodsid != null "> and bi.goodsid = #{goodsid}</if>
+        </where>
+    </select>
+    
+    <select id="selectBusInportById" parameterType="Long" resultMap="BusInportResult">
+        <include refid="selectBusInportVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBusInport" parameterType="BusInport" useGeneratedKeys="true" keyProperty="id">
+        insert into bus_inport
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="paytype != null  and paytype != ''">paytype,</if>
+            <if test="inporttime != null ">inporttime,</if>
+            <if test="operateperson != null  and operateperson != ''">operateperson,</if>
+            <if test="number != null ">number,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="inportprice != null ">inportprice,</if>
+            <if test="goodsid != null ">goodsid,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="paytype != null  and paytype != ''">#{paytype},</if>
+            <if test="inporttime != null ">#{inporttime},</if>
+            <if test="operateperson != null  and operateperson != ''">#{operateperson},</if>
+            <if test="number != null ">#{number},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="inportprice != null ">#{inportprice},</if>
+            <if test="goodsid != null ">#{goodsid},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusInport" parameterType="BusInport">
+        update bus_inport
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="paytype != null  and paytype != ''">paytype = #{paytype},</if>
+            <if test="inporttime != null ">inporttime = #{inporttime},</if>
+            <if test="operateperson != null  and operateperson != ''">operateperson = #{operateperson},</if>
+            <if test="number != null ">number = #{number},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="inportprice != null ">inportprice = #{inportprice},</if>
+            <if test="goodsid != null ">goodsid = #{goodsid},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBusInportById" parameterType="Long">
+        delete from bus_inport where id = #{id}
+    </delete>
+
+    <delete id="deleteBusInportByIds" parameterType="String">
+        delete from bus_inport where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.logistic.project.system.mapper.BusProviderMapper">
+    
+    <resultMap type="BusProvider" id="BusProviderResult">
+        <result property="id"    column="id"    />
+        <result property="providername"    column="providername"    />
+        <result property="zip"    column="zip"    />
+        <result property="address"    column="address"    />
+        <result property="telephone"    column="telephone"    />
+        <result property="connectionperson"    column="connectionperson"    />
+        <result property="phone"    column="phone"    />
+        <result property="bank"    column="bank"    />
+        <result property="account"    column="account"    />
+        <result property="email"    column="email"    />
+        <result property="fax"    column="fax"    />
+        <result property="available"    column="available"    />
+    </resultMap>
+
+    <sql id="selectBusProviderVo">
+        select id, providername, zip, address, telephone, connectionperson, phone, bank, account, email, fax, available from bus_provider
+    </sql>
+
+    <select id="selectBusProviderList" parameterType="BusProvider" resultMap="BusProviderResult">
+        <include refid="selectBusProviderVo"/>
+        <where>  
+            <if test="providername != null  and providername != ''"> and providername like concat('%', #{providername}, '%')</if>
+            <if test="address != null  and address != ''"> and address like concat('%', #{address}, '%')</if>
+            <if test="telephone != null  and telephone != ''"> and telephone like concat('%', #{telephone}, '%')</if>
+            <if test="connectionperson != null  and connectionperson != ''"> and connectionperson like concat('%', #{connectionperson}, '%')</if>
+            <if test="email != null  and email != ''"> and email = #{email}</if>
+        </where>
+    </select>
+    
+    <select id="selectBusProviderById" parameterType="Long" resultMap="BusProviderResult">
+        <include refid="selectBusProviderVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBusProvider" parameterType="BusProvider" useGeneratedKeys="true" keyProperty="id">
+        insert into bus_provider
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="providername != null  and providername != ''">providername,</if>
+            <if test="zip != null  and zip != ''">zip,</if>
+            <if test="address != null  and address != ''">address,</if>
+            <if test="telephone != null  and telephone != ''">telephone,</if>
+            <if test="connectionperson != null  and connectionperson != ''">connectionperson,</if>
+            <if test="phone != null  and phone != ''">phone,</if>
+            <if test="bank != null  and bank != ''">bank,</if>
+            <if test="account != null  and account != ''">account,</if>
+            <if test="email != null  and email != ''">email,</if>
+            <if test="fax != null  and fax != ''">fax,</if>
+            <if test="available != null ">available,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="providername != null  and providername != ''">#{providername},</if>
+            <if test="zip != null  and zip != ''">#{zip},</if>
+            <if test="address != null  and address != ''">#{address},</if>
+            <if test="telephone != null  and telephone != ''">#{telephone},</if>
+            <if test="connectionperson != null  and connectionperson != ''">#{connectionperson},</if>
+            <if test="phone != null  and phone != ''">#{phone},</if>
+            <if test="bank != null  and bank != ''">#{bank},</if>
+            <if test="account != null  and account != ''">#{account},</if>
+            <if test="email != null  and email != ''">#{email},</if>
+            <if test="fax != null  and fax != ''">#{fax},</if>
+            <if test="available != null ">#{available},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusProvider" parameterType="BusProvider">
+        update bus_provider
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="providername != null  and providername != ''">providername = #{providername},</if>
+            <if test="zip != null  and zip != ''">zip = #{zip},</if>
+            <if test="address != null  and address != ''">address = #{address},</if>
+            <if test="telephone != null  and telephone != ''">telephone = #{telephone},</if>
+            <if test="connectionperson != null  and connectionperson != ''">connectionperson = #{connectionperson},</if>
+            <if test="phone != null  and phone != ''">phone = #{phone},</if>
+            <if test="bank != null  and bank != ''">bank = #{bank},</if>
+            <if test="account != null  and account != ''">account = #{account},</if>
+            <if test="email != null  and email != ''">email = #{email},</if>
+            <if test="fax != null  and fax != ''">fax = #{fax},</if>
+            <if test="available != null ">available = #{available},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBusProviderById" parameterType="Long">
+        delete from bus_provider where id = #{id}
+    </delete>
+
+    <delete id="deleteBusProviderByIds" parameterType="String">
+        delete from bus_provider where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

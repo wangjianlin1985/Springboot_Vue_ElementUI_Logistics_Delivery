@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.logistic.project.system.mapper.ShippingdocMapper">
+    
+    <resultMap type="Shippingdoc" id="ShippingdocResult">
+        <result property="id"    column="id"    />
+        <result property="goodsid"    column="goodsid"    />
+        <result property="shippingTime"    column="shipping_time"    />
+        <result property="cgy"    column="cgy"    />
+        <result property="operator"    column="operator"    />
+        <result property="shipPerson"    column="ship_person"    />
+        <result property="warehouse"    column="warehouse"    />
+    </resultMap>
+
+    <sql id="selectShippingdocVo">
+        select id, goodsid, shipping_time, cgy, operator, ship_person, warehouse from shippingdoc
+    </sql>
+
+    <select id="selectShippingdocList" parameterType="Shippingdoc" resultMap="ShippingdocResult">
+        <include refid="selectShippingdocVo"/>
+        <where>  
+            <if test="goodsid != null "> and goodsid like concat('%', #{goodsid}, '%')</if>
+            <if test="shippingTime != null "> and shipping_time = #{shippingTime}</if>
+        </where>
+    </select>
+    
+    <select id="selectShippingdocById" parameterType="Long" resultMap="ShippingdocResult">
+        <include refid="selectShippingdocVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertShippingdoc" parameterType="Shippingdoc" useGeneratedKeys="true" keyProperty="id">
+        insert into shippingdoc
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="goodsid != null ">goodsid,</if>
+            <if test="shippingTime != null ">shipping_time,</if>
+            <if test="cgy != null  and cgy != ''">cgy,</if>
+            <if test="operator != null  and operator != ''">operator,</if>
+            <if test="shipPerson != null  and shipPerson != ''">ship_person,</if>
+            <if test="warehouse != null  and warehouse != ''">warehouse,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="goodsid != null ">#{goodsid},</if>
+            <if test="shippingTime != null ">#{shippingTime},</if>
+            <if test="cgy != null  and cgy != ''">#{cgy},</if>
+            <if test="operator != null  and operator != ''">#{operator},</if>
+            <if test="shipPerson != null  and shipPerson != ''">#{shipPerson},</if>
+            <if test="warehouse != null  and warehouse != ''">#{warehouse},</if>
+         </trim>
+    </insert>
+
+    <update id="updateShippingdoc" parameterType="Shippingdoc">
+        update shippingdoc
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="goodsid != null ">goodsid = #{goodsid},</if>
+            <if test="shippingTime != null ">shipping_time = #{shippingTime},</if>
+            <if test="cgy != null  and cgy != ''">cgy = #{cgy},</if>
+            <if test="operator != null  and operator != ''">operator = #{operator},</if>
+            <if test="shipPerson != null  and shipPerson != ''">ship_person = #{shipPerson},</if>
+            <if test="warehouse != null  and warehouse != ''">warehouse = #{warehouse},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteShippingdocById" parameterType="Long">
+        delete from shippingdoc where id = #{id}
+    </delete>
+
+    <delete id="deleteShippingdocByIds" parameterType="String">
+        delete from shippingdoc where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

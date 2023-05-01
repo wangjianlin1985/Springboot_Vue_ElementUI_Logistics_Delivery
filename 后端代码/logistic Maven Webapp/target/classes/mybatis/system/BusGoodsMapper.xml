@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.logistic.project.system.mapper.BusGoodsMapper">
+    
+    <resultMap type="BusGoods" id="BusGoodsResult">
+        <result property="id"    column="id"    />
+        <result property="goodsname"    column="goodsname"    />
+        <result property="produceplace"    column="produceplace"    />
+        <result property="size"    column="size"    />
+        <result property="goodspackage"    column="goodspackage"    />
+        <result property="productcode"    column="productcode"    />
+        <result property="promitcode"    column="promitcode"    />
+        <result property="description"    column="description"    />
+        <result property="price"    column="price"    />
+        <result property="number"    column="number"    />
+        <result property="dangernum"    column="dangernum"    />
+        <result property="goodsimg"    column="goodsimg"    />
+        <result property="available"    column="available"    />
+        <result property="providerid"    column="providerid"    />
+        <association property="busProvider"    column="providerid" javaType="BusProvider" resultMap="BusProResult" />
+    </resultMap>
+    
+    <resultMap type="BusProvider" id="BusProResult">
+       
+        <result property="providername"    column="providername"    />
+
+    </resultMap>
+
+    <sql id="selectBusGoodsVo">
+        select id, goodsname, produceplace, size, goodspackage, productcode, promitcode, description, price, number, dangernum, goodsimg, available, providerid from bus_goods
+    </sql>
+
+    <select id="selectBusGoodsList" parameterType="BusGoods" resultMap="BusGoodsResult">
+      SELECT bg.* ,bp.providername FROM bus_goods  bg,bus_provider bp WHERE bg.providerid = bp.id
+
+
+         
+            <if test="goodsname != null  and goodsname != ''"> and bg.goodsname like concat('%', #{goodsname}, '%')</if>
+            <if test="produceplace != null  and produceplace != ''"> and bg.produceplace = #{produceplace}</if>
+            <if test="price != null "> and bg.price = #{price}</if>
+            <if test="number != null "> and bg.number = #{number}</if>
+            <if test="dangernum != null "> and bg.dangernum = #{dangernum}</if>
+            <if test="available != null "> and bg.available = #{available}</if>
+        
+    </select>
+    
+    <select id="selectBusGoodsById" parameterType="Long" resultMap="BusGoodsResult">
+        <include refid="selectBusGoodsVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBusGoods" parameterType="BusGoods" useGeneratedKeys="true" keyProperty="id">
+        insert into bus_goods
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="goodsname != null  and goodsname != ''">goodsname,</if>
+            <if test="produceplace != null  and produceplace != ''">produceplace,</if>
+            <if test="size != null  and size != ''">size,</if>
+            <if test="goodspackage != null  and goodspackage != ''">goodspackage,</if>
+            <if test="productcode != null  and productcode != ''">productcode,</if>
+            <if test="promitcode != null  and promitcode != ''">promitcode,</if>
+            <if test="description != null  and description != ''">description,</if>
+            <if test="price != null ">price,</if>
+            <if test="number != null ">number,</if>
+            <if test="dangernum != null ">dangernum,</if>
+            <if test="goodsimg != null  and goodsimg != ''">goodsimg,</if>
+            <if test="available != null ">available,</if>
+            <if test="providerid != null ">providerid,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="goodsname != null  and goodsname != ''">#{goodsname},</if>
+            <if test="produceplace != null  and produceplace != ''">#{produceplace},</if>
+            <if test="size != null  and size != ''">#{size},</if>
+            <if test="goodspackage != null  and goodspackage != ''">#{goodspackage},</if>
+            <if test="productcode != null  and productcode != ''">#{productcode},</if>
+            <if test="promitcode != null  and promitcode != ''">#{promitcode},</if>
+            <if test="description != null  and description != ''">#{description},</if>
+            <if test="price != null ">#{price},</if>
+            <if test="number != null ">#{number},</if>
+            <if test="dangernum != null ">#{dangernum},</if>
+            <if test="goodsimg != null  and goodsimg != ''">#{goodsimg},</if>
+            <if test="available != null ">#{available},</if>
+            <if test="providerid != null ">#{providerid},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusGoods" parameterType="BusGoods">
+        update bus_goods
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="goodsname != null  and goodsname != ''">goodsname = #{goodsname},</if>
+            <if test="produceplace != null  and produceplace != ''">produceplace = #{produceplace},</if>
+            <if test="size != null  and size != ''">size = #{size},</if>
+            <if test="goodspackage != null  and goodspackage != ''">goodspackage = #{goodspackage},</if>
+            <if test="productcode != null  and productcode != ''">productcode = #{productcode},</if>
+            <if test="promitcode != null  and promitcode != ''">promitcode = #{promitcode},</if>
+            <if test="description != null  and description != ''">description = #{description},</if>
+            <if test="price != null ">price = #{price},</if>
+            <if test="number != null ">number = #{number},</if>
+            <if test="dangernum != null ">dangernum = #{dangernum},</if>
+            <if test="goodsimg != null  and goodsimg != ''">goodsimg = #{goodsimg},</if>
+            <if test="available != null ">available = #{available},</if>
+            <if test="providerid != null ">providerid = #{providerid},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBusGoodsById" parameterType="Long">
+        delete from bus_goods where id = #{id}
+    </delete>
+
+    <delete id="deleteBusGoodsByIds" parameterType="String">
+        delete from bus_goods where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

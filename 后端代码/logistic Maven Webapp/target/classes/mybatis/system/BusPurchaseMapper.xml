@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.logistic.project.system.mapper.BusPurchaseMapper">
+    
+    <resultMap type="BusPurchase" id="BusPurchaseResult">
+        <result property="id"    column="id"    />
+        <result property="purchaseNum"    column="purchase_num"    />
+        <result property="purchaseDate"    column="purchase_date"    />
+        <result property="completeDate"    column="complete_date"    />
+        <result property="person"    column="person"    />
+        <result property="purchaseState"    column="purchase_state"    />
+    </resultMap>
+
+    <sql id="selectBusPurchaseVo">
+        select id, purchase_num, purchase_date, complete_date, person, purchase_state from bus_purchase
+    </sql>
+
+    <select id="selectBusPurchaseList" parameterType="BusPurchase" resultMap="BusPurchaseResult">
+        <include refid="selectBusPurchaseVo"/>
+        <where>  
+            <if test="purchaseNum != null  and purchaseNum != ''"> and purchase_num like concat('%', #{purchaseNum}, '%')</if>
+            <if test="purchaseDate != null "> and purchase_date &lt;= #{purchaseDate}</if>
+            <if test="completeDate != null "> and complete_date &lt;= #{completeDate}</if>
+            <if test="person != null  and person != ''"> and person like concat('%', #{person}, '%')</if>
+            <if test="purchaseState != null "> and purchase_state = #{purchaseState}</if>
+        </where>
+    </select>
+    
+    <select id="selectBusPurchaseById" parameterType="Long" resultMap="BusPurchaseResult">
+        <include refid="selectBusPurchaseVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBusPurchase" parameterType="BusPurchase" useGeneratedKeys="true" keyProperty="id">
+        insert into bus_purchase
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="purchaseNum != null  and purchaseNum != ''">purchase_num,</if>
+            <if test="purchaseDate != null ">purchase_date,</if>
+            <if test="completeDate != null ">complete_date,</if>
+            <if test="person != null  and person != ''">person,</if>
+            <if test="purchaseState != null ">purchase_state,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="purchaseNum != null  and purchaseNum != ''">#{purchaseNum},</if>
+            <if test="purchaseDate != null ">#{purchaseDate},</if>
+            <if test="completeDate != null ">#{completeDate},</if>
+            <if test="person != null  and person != ''">#{person},</if>
+            <if test="purchaseState != null ">#{purchaseState},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusPurchase" parameterType="BusPurchase">
+        update bus_purchase
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="purchaseNum != null  and purchaseNum != ''">purchase_num = #{purchaseNum},</if>
+            <if test="purchaseDate != null ">purchase_date = #{purchaseDate},</if>
+            <if test="completeDate != null ">complete_date = #{completeDate},</if>
+            <if test="person != null  and person != ''">person = #{person},</if>
+            <if test="purchaseState != null ">purchase_state = #{purchaseState},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBusPurchaseById" parameterType="Long">
+        delete from bus_purchase where id = #{id}
+    </delete>
+
+    <delete id="deleteBusPurchaseByIds" parameterType="String">
+        delete from bus_purchase where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

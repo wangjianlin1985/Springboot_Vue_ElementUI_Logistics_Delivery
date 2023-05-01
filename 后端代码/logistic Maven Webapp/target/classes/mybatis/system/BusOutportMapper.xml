@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.logistic.project.system.mapper.BusOutportMapper">
+    
+    <resultMap type="BusOutport" id="BusOutportResult">
+        <result property="id"    column="id"    />
+        <result property="providerid"    column="providerid"    />
+        <result property="paytype"    column="paytype"    />
+        <result property="outputtime"    column="outputtime"    />
+        <result property="operateperson"    column="operateperson"    />
+        <result property="outportprice"    column="outportprice"    />
+        <result property="number"    column="number"    />
+        <result property="remark"    column="remark"    />
+        <result property="goodsid"    column="goodsid"    />
+        
+         <association property="busProvider"    column="providerid" javaType="BusProvider" resultMap="BusProResult" />
+         <association property="busGoods"    column="goodsid" javaType="BusGoods" resultMap="goodResult" />
+    </resultMap>
+    
+       <resultMap type="BusProvider" id="BusProResult">
+        <result property="providername"    column="providername"    />
+    </resultMap>
+     <resultMap type="BusGoods" id="goodResult">
+        <result property="goodsname"    column="goodsname"    />
+    </resultMap>
+
+    <sql id="selectBusOutportVo">
+        select id, providerid, paytype, outputtime, operateperson, outportprice, number, remark, goodsid from bus_outport
+    </sql>
+
+    <select id="selectBusOutportList" parameterType="BusOutport" resultMap="BusOutportResult">
+          SELECT  * FROM bus_outport bo ,bus_goods bg,bus_provider bp WHERE 
+  bo.providerid = bp.id AND bg.id =  bo.goodsid 
+         
+          
+            <if test="outputtime != null "> and bo.outputtime = #{outputtime}</if>
+           
+        
+    </select>
+    
+    <select id="selectBusOutportById" parameterType="Long" resultMap="BusOutportResult">
+        <include refid="selectBusOutportVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBusOutport" parameterType="BusOutport" useGeneratedKeys="true" keyProperty="id">
+        insert into bus_outport
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="providerid != null ">providerid,</if>
+            <if test="paytype != null  and paytype != ''">paytype,</if>
+            <if test="outputtime != null ">outputtime,</if>
+            <if test="operateperson != null  and operateperson != ''">operateperson,</if>
+            <if test="outportprice != null ">outportprice,</if>
+            <if test="number != null ">number,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+            <if test="goodsid != null ">goodsid,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="providerid != null ">#{providerid},</if>
+            <if test="paytype != null  and paytype != ''">#{paytype},</if>
+            <if test="outputtime != null ">#{outputtime},</if>
+            <if test="operateperson != null  and operateperson != ''">#{operateperson},</if>
+            <if test="outportprice != null ">#{outportprice},</if>
+            <if test="number != null ">#{number},</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+            <if test="goodsid != null ">#{goodsid},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusOutport" parameterType="BusOutport">
+        update bus_outport
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="providerid != null ">providerid = #{providerid},</if>
+            <if test="paytype != null  and paytype != ''">paytype = #{paytype},</if>
+            <if test="outputtime != null ">outputtime = #{outputtime},</if>
+            <if test="operateperson != null  and operateperson != ''">operateperson = #{operateperson},</if>
+            <if test="outportprice != null ">outportprice = #{outportprice},</if>
+            <if test="number != null ">number = #{number},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+            <if test="goodsid != null ">goodsid = #{goodsid},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBusOutportById" parameterType="Long">
+        delete from bus_outport where id = #{id}
+    </delete>
+
+    <delete id="deleteBusOutportByIds" parameterType="String">
+        delete from bus_outport where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.logistic.project.system.mapper.BusCkCheckMapper">
+    
+    <resultMap type="BusCkCheck" id="BusCkCheckResult">
+        <result property="id"    column="id"    />
+        <result property="ckNum"    column="ck_num"    />
+        <result property="ckTemp"    column="ck_temp"    />
+        <result property="checkPerson"    column="check_person"    />
+        <result property="checkDate"    column="check_date"    />
+    </resultMap>
+
+    <sql id="selectBusCkCheckVo">
+        select id, ck_num, ck_temp, check_person, check_date from bus_ck_check
+    </sql>
+
+    <select id="selectBusCkCheckList" parameterType="BusCkCheck" resultMap="BusCkCheckResult">
+        <include refid="selectBusCkCheckVo"/>
+        <where>  
+            <if test="ckNum != null  and ckNum != ''"> and ck_num like concat('%', #{ckNum}, '%')</if>
+            <if test="checkDate != null "> and check_date = #{checkDate}</if>
+        </where>
+    </select>
+    
+    <select id="selectBusCkCheckById" parameterType="Long" resultMap="BusCkCheckResult">
+        <include refid="selectBusCkCheckVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBusCkCheck" parameterType="BusCkCheck" useGeneratedKeys="true" keyProperty="id">
+        insert into bus_ck_check
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="ckNum != null  and ckNum != ''">ck_num,</if>
+            <if test="ckTemp != null  and ckTemp != ''">ck_temp,</if>
+            <if test="checkPerson != null  and checkPerson != ''">check_person,</if>
+            <if test="checkDate != null ">check_date,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="ckNum != null  and ckNum != ''">#{ckNum},</if>
+            <if test="ckTemp != null  and ckTemp != ''">#{ckTemp},</if>
+            <if test="checkPerson != null  and checkPerson != ''">#{checkPerson},</if>
+            <if test="checkDate != null ">#{checkDate},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusCkCheck" parameterType="BusCkCheck">
+        update bus_ck_check
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="ckNum != null  and ckNum != ''">ck_num = #{ckNum},</if>
+            <if test="ckTemp != null  and ckTemp != ''">ck_temp = #{ckTemp},</if>
+            <if test="checkPerson != null  and checkPerson != ''">check_person = #{checkPerson},</if>
+            <if test="checkDate != null ">check_date = #{checkDate},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBusCkCheckById" parameterType="Long">
+        delete from bus_ck_check where id = #{id}
+    </delete>
+
+    <delete id="deleteBusCkCheckByIds" parameterType="String">
+        delete from bus_ck_check where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

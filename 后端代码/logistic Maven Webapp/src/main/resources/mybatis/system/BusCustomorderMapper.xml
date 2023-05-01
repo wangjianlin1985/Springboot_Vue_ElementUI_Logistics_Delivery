@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.logistic.project.system.mapper.BusCustomorderMapper">
+    
+    <resultMap type="BusCustomorder" id="BusCustomorderResult">
+        <result property="id"    column="id"    />
+        <result property="custName"    column="cust_name"    />
+        <result property="orderDate"    column="order_date"    />
+        <result property="orderType"    column="order_type"    />
+        <result property="payType"    column="pay_type"    />
+        <result property="state"    column="state"    />
+    </resultMap>
+
+    <sql id="selectBusCustomorderVo">
+        select id, cust_name, order_date, order_type, pay_type, state from bus_customorder
+    </sql>
+
+    <select id="selectBusCustomorderList" parameterType="BusCustomorder" resultMap="BusCustomorderResult">
+        <include refid="selectBusCustomorderVo"/>
+        <where>  
+            <if test="custName != null  and custName != ''"> and cust_name like concat('%', #{custName}, '%')</if>
+            <if test="orderDate != null "> and order_date &lt;= #{orderDate}</if>
+            <if test="orderType != null  and orderType != ''"> and order_type = #{orderType}</if>
+            <if test="payType != null  and payType != ''"> and pay_type = #{payType}</if>
+        </where>
+    </select>
+    
+    <select id="selectBusCustomorderById" parameterType="Long" resultMap="BusCustomorderResult">
+        <include refid="selectBusCustomorderVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBusCustomorder" parameterType="BusCustomorder" useGeneratedKeys="true" keyProperty="id">
+        insert into bus_customorder
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="custName != null  and custName != ''">cust_name,</if>
+            <if test="orderDate != null ">order_date,</if>
+            <if test="orderType != null  and orderType != ''">order_type,</if>
+            <if test="payType != null  and payType != ''">pay_type,</if>
+            <if test="state != null  and state != ''">state,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="custName != null  and custName != ''">#{custName},</if>
+            <if test="orderDate != null ">#{orderDate},</if>
+            <if test="orderType != null  and orderType != ''">#{orderType},</if>
+            <if test="payType != null  and payType != ''">#{payType},</if>
+            <if test="state != null  and state != ''">#{state},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusCustomorder" parameterType="BusCustomorder">
+        update bus_customorder
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="custName != null  and custName != ''">cust_name = #{custName},</if>
+            <if test="orderDate != null ">order_date = #{orderDate},</if>
+            <if test="orderType != null  and orderType != ''">order_type = #{orderType},</if>
+            <if test="payType != null  and payType != ''">pay_type = #{payType},</if>
+            <if test="state != null  and state != ''">state = #{state},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBusCustomorderById" parameterType="Long">
+        delete from bus_customorder where id = #{id}
+    </delete>
+
+    <delete id="deleteBusCustomorderByIds" parameterType="String">
+        delete from bus_customorder where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

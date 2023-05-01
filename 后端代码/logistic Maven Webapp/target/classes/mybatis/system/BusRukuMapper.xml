@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.logistic.project.system.mapper.BusRukuMapper">
+    
+    <resultMap type="BusRuku" id="BusRukuResult">
+        <result property="id"    column="id"    />
+        <result property="rukuNum"    column="ruku_num"    />
+        <result property="cgy"    column="cgy"    />
+        <result property="rukuTime"    column="ruku_time"    />
+        <result property="dhtz"    column="dhtz"    />
+    </resultMap>
+
+    <sql id="selectBusRukuVo">
+        select id, ruku_num, cgy, ruku_time, dhtz from bus_ruku
+    </sql>
+
+    <select id="selectBusRukuList" parameterType="BusRuku" resultMap="BusRukuResult">
+        <include refid="selectBusRukuVo"/>
+        <where>  
+            <if test="rukuNum != null  and rukuNum != ''"> and ruku_num = #{rukuNum}</if>
+            <if test="dhtz != null  and dhtz != ''"> and dhtz = #{dhtz}</if>
+        </where>
+    </select>
+    
+    <select id="selectBusRukuById" parameterType="Long" resultMap="BusRukuResult">
+        <include refid="selectBusRukuVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBusRuku" parameterType="BusRuku" useGeneratedKeys="true" keyProperty="id">
+        insert into bus_ruku
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="rukuNum != null  and rukuNum != ''">ruku_num,</if>
+            <if test="cgy != null  and cgy != ''">cgy,</if>
+            <if test="rukuTime != null ">ruku_time,</if>
+            <if test="dhtz != null  and dhtz != ''">dhtz,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="rukuNum != null  and rukuNum != ''">#{rukuNum},</if>
+            <if test="cgy != null  and cgy != ''">#{cgy},</if>
+            <if test="rukuTime != null ">#{rukuTime},</if>
+            <if test="dhtz != null  and dhtz != ''">#{dhtz},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusRuku" parameterType="BusRuku">
+        update bus_ruku
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="rukuNum != null  and rukuNum != ''">ruku_num = #{rukuNum},</if>
+            <if test="cgy != null  and cgy != ''">cgy = #{cgy},</if>
+            <if test="rukuTime != null ">ruku_time = #{rukuTime},</if>
+            <if test="dhtz != null  and dhtz != ''">dhtz = #{dhtz},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBusRukuById" parameterType="Long">
+        delete from bus_ruku where id = #{id}
+    </delete>
+
+    <delete id="deleteBusRukuByIds" parameterType="String">
+        delete from bus_ruku where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

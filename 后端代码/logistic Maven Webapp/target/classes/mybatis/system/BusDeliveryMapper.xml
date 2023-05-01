@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.logistic.project.system.mapper.BusDeliveryMapper">
+    
+    <resultMap type="BusDelivery" id="BusDeliveryResult">
+        <result property="id"    column="id"    />
+        <result property="goodsid"    column="goodsid"    />
+        <result property="deliveryTime"    column="delivery_time"    />
+        <result property="deliveryPerson"    column="delivery_person"    />
+        <result property="address"    column="address"    />
+        <result property="operator"    column="operator"    />
+         <association property="busGoods"    column="goodsid" javaType="BusGoods" resultMap="goodResult" />
+    </resultMap>
+    
+        <resultMap type="BusGoods" id="goodResult">
+        <result property="goodsname"    column="goodsname"    />
+    </resultMap>
+
+    <sql id="selectBusDeliveryVo">
+        select id, goodsid, delivery_time, delivery_person, address, operator from bus_delivery
+    </sql>
+
+    <select id="selectBusDeliveryList" parameterType="BusDelivery" resultMap="BusDeliveryResult">
+       SELECT *  FROM bus_delivery bd, bus_goods bg WHERE bd.goodsid = bg.id
+       
+            <if test="goodsid != null "> and bd.goodsid = #{goodsid}</if>
+            <if test="deliveryTime != null "> and bd.delivery_time = #{deliveryTime}</if>
+            <if test="deliveryPerson != null  and deliveryPerson != ''"> and bd.delivery_person = #{deliveryPerson}</if>
+            <if test="address != null  and address != ''"> and bd.address = #{address}</if>
+            <if test="operator != null  and operator != ''"> and bd.operator = #{operator}</if>
+         
+    </select>
+    
+    <select id="selectBusDeliveryById" parameterType="Long" resultMap="BusDeliveryResult">
+        <include refid="selectBusDeliveryVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBusDelivery" parameterType="BusDelivery">
+        insert into bus_delivery
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">id,</if>
+            <if test="goodsid != null ">goodsid,</if>
+            <if test="deliveryTime != null ">delivery_time,</if>
+            <if test="deliveryPerson != null  and deliveryPerson != ''">delivery_person,</if>
+            <if test="address != null  and address != ''">address,</if>
+            <if test="operator != null  and operator != ''">operator,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="goodsid != null ">#{goodsid},</if>
+            <if test="deliveryTime != null ">#{deliveryTime},</if>
+            <if test="deliveryPerson != null  and deliveryPerson != ''">#{deliveryPerson},</if>
+            <if test="address != null  and address != ''">#{address},</if>
+            <if test="operator != null  and operator != ''">#{operator},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusDelivery" parameterType="BusDelivery">
+        update bus_delivery
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="goodsid != null ">goodsid = #{goodsid},</if>
+            <if test="deliveryTime != null ">delivery_time = #{deliveryTime},</if>
+            <if test="deliveryPerson != null  and deliveryPerson != ''">delivery_person = #{deliveryPerson},</if>
+            <if test="address != null  and address != ''">address = #{address},</if>
+            <if test="operator != null  and operator != ''">operator = #{operator},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBusDeliveryById" parameterType="Long">
+        delete from bus_delivery where id = #{id}
+    </delete>
+
+    <delete id="deleteBusDeliveryByIds" parameterType="String">
+        delete from bus_delivery where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

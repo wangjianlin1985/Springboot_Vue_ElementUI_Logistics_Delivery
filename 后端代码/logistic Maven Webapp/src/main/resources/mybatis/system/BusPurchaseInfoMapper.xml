@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.logistic.project.system.mapper.BusPurchaseInfoMapper">
+    
+    <resultMap type="BusPurchaseInfo" id="BusPurchaseInfoResult">
+        <result property="id"    column="id"    />
+        <result property="purchaseNum"    column="purchase_num"    />
+        <result property="goodId"    column="good_id"    />
+        <result property="num"    column="num"    />
+        <result property="purchaseDate"    column="purchase_date"    />
+        <association property="busGoods"    column="goodId" javaType="BusGoods" resultMap="goodsResult" />
+      
+    </resultMap>
+    
+        <resultMap type="BusGoods" id="goodsResult">
+       
+        	<result property="goodsname"    column="goodsname"    />
+
+	    </resultMap>
+	    
+	  
+    
+
+    <sql id="selectBusPurchaseInfoVo">
+        select id, purchase_num, good_id, num, purchase_date from bus_purchase_info
+    </sql>
+
+    <select id="selectBusPurchaseInfoList" parameterType="BusPurchaseInfo" resultMap="BusPurchaseInfoResult">
+	   SELECT bpi.*,bg.goodsname FROM bus_purchase_info bpi ,bus_goods bg 
+	    WHERE bpi.good_id =  bg.id 
+        
+            <if test="purchaseNum != null "> and purchase_num = #{purchaseNum}</if>
+            <if test="goodId != null "> and good_id = #{goodId}</if>
+        
+    </select>
+    
+    <select id="selectBusPurchaseInfoById" parameterType="Long" resultMap="BusPurchaseInfoResult">
+        <include refid="selectBusPurchaseInfoVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBusPurchaseInfo" parameterType="BusPurchaseInfo" useGeneratedKeys="true" keyProperty="id">
+        insert into bus_purchase_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="purchaseNum != null ">purchase_num,</if>
+            <if test="goodId != null ">good_id,</if>
+            <if test="num != null ">num,</if>
+            <if test="purchaseDate != null ">purchase_date,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="purchaseNum != null ">#{purchaseNum},</if>
+            <if test="goodId != null ">#{goodId},</if>
+            <if test="num != null ">#{num},</if>
+            <if test="purchaseDate != null ">#{purchaseDate},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusPurchaseInfo" parameterType="BusPurchaseInfo">
+        update bus_purchase_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="purchaseNum != null ">purchase_num = #{purchaseNum},</if>
+            <if test="goodId != null ">good_id = #{goodId},</if>
+            <if test="num != null ">num = #{num},</if>
+            <if test="purchaseDate != null ">purchase_date = #{purchaseDate},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBusPurchaseInfoById" parameterType="Long">
+        delete from bus_purchase_info where id = #{id}
+    </delete>
+
+    <delete id="deleteBusPurchaseInfoByIds" parameterType="String">
+        delete from bus_purchase_info where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

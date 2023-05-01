@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.logistic.project.system.mapper.MaterialScrapMapper">
+    
+    <resultMap type="MaterialScrap" id="MaterialScrapResult">
+        <result property="id"    column="id"    />
+        <result property="materialNum"    column="material_num"    />
+        <result property="specifications"    column="specifications"    />
+        <result property="weight"    column="weight"    />
+        <result property="company"    column="company"    />
+        <result property="reason"    column="reason"    />
+        <result property="scrapPerson"    column="scrap_person"    />
+        <result property="goodid"    column="goodId"    />
+        <association property="busGoods"    column="goodId" javaType="BusGoods" resultMap="goodsResult" />
+      
+    </resultMap>
+    
+        <resultMap type="BusGoods" id="goodsResult">
+       
+        	<result property="goodsname"    column="goodsname"   />
+
+	    </resultMap>
+
+    <sql id="selectMaterialScrapVo">
+        select id, material_num, specifications, weight, company, reason, scrap_person, goodId from material_scrap
+    </sql>
+
+    <select id="selectMaterialScrapList" parameterType="MaterialScrap" resultMap="MaterialScrapResult">
+           SELECT ms.id, ms.material_num, ms.specifications, ms.weight, ms.company, 
+		   ms.reason, ms.scrap_person, ms.goodId ,bg.goodsname FROM material_scrap ms,bus_goods bg
+		   WHERE bg.id =  ms.goodId
+         
+            <if test="materialNum != null  and materialNum != ''"> and material_num = #{materialNum}</if>
+            <if test="goodid != null "> and goodId = #{goodid}</if>
+    </select>
+    
+    <select id="selectMaterialScrapById" parameterType="Long" resultMap="MaterialScrapResult">
+        <include refid="selectMaterialScrapVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertMaterialScrap" parameterType="MaterialScrap" useGeneratedKeys="true" keyProperty="id">
+        insert into material_scrap
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="materialNum != null  and materialNum != ''">material_num,</if>
+            <if test="specifications != null  and specifications != ''">specifications,</if>
+            <if test="weight != null ">weight,</if>
+            <if test="company != null  and company != ''">company,</if>
+            <if test="reason != null  and reason != ''">reason,</if>
+            <if test="scrapPerson != null  and scrapPerson != ''">scrap_person,</if>
+            <if test="goodid != null ">goodId,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="materialNum != null  and materialNum != ''">#{materialNum},</if>
+            <if test="specifications != null  and specifications != ''">#{specifications},</if>
+            <if test="weight != null ">#{weight},</if>
+            <if test="company != null  and company != ''">#{company},</if>
+            <if test="reason != null  and reason != ''">#{reason},</if>
+            <if test="scrapPerson != null  and scrapPerson != ''">#{scrapPerson},</if>
+            <if test="goodid != null ">#{goodid},</if>
+         </trim>
+    </insert>
+
+    <update id="updateMaterialScrap" parameterType="MaterialScrap">
+        update material_scrap
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="materialNum != null  and materialNum != ''">material_num = #{materialNum},</if>
+            <if test="specifications != null  and specifications != ''">specifications = #{specifications},</if>
+            <if test="weight != null ">weight = #{weight},</if>
+            <if test="company != null  and company != ''">company = #{company},</if>
+            <if test="reason != null  and reason != ''">reason = #{reason},</if>
+            <if test="scrapPerson != null  and scrapPerson != ''">scrap_person = #{scrapPerson},</if>
+            <if test="goodid != null ">goodId = #{goodid},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteMaterialScrapById" parameterType="Long">
+        delete from material_scrap where id = #{id}
+    </delete>
+
+    <delete id="deleteMaterialScrapByIds" parameterType="String">
+        delete from material_scrap where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

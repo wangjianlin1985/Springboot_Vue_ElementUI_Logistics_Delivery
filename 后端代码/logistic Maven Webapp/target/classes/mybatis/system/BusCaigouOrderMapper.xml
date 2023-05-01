@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.logistic.project.system.mapper.BusCaigouOrderMapper">
+    
+    <resultMap type="BusCaigouOrder" id="BusCaigouOrderResult">
+        <result property="id"    column="id"    />
+        <result property="cgOrderNum"    column="cg_order_num"    />
+        <result property="providerId"    column="provider_id"    />
+        <result property="cgDate"    column="cg_date"    />
+        <result property="cgy"    column="cgy"    />
+        <result property="state"    column="state"    />
+         <association property="busProvider"    column="providerid" javaType="BusProvider" resultMap="BusProResult" />
+    </resultMap>
+    
+    <resultMap type="BusProvider" id="BusProResult">
+       
+        <result property="providername"    column="providername"    />
+
+    </resultMap>
+
+    <sql id="selectBusCaigouOrderVo">
+        select id, cg_order_num, provider_id, cg_date, cgy, state from bus_caigou_order
+    </sql>
+
+    <select id="selectBusCaigouOrderList" parameterType="BusCaigouOrder" resultMap="BusCaigouOrderResult">
+       SELECT bco.id, bco.cg_order_num, bco.provider_id, bco.cg_date, bco.cgy, bco.state,bp.providername FROM bus_caigou_order bco,bus_provider bp
+ 	   WHERE bco.provider_id =  bp.id
+            <if test="cgOrderNum != null  and cgOrderNum != ''"> and cg_order_num = #{cgOrderNum}</if>
+            <if test="providerId != null "> and provider_id = #{providerId}</if>
+            <if test="cgDate != null "> and cg_date = #{cgDate}</if>
+            <if test="cgy != null  and cgy != ''"> and cgy = #{cgy}</if>
+    </select>
+    
+    <select id="selectBusCaigouOrderById" parameterType="Long" resultMap="BusCaigouOrderResult">
+        <include refid="selectBusCaigouOrderVo"/>
+        where id = #{id}
+    </select>
+        
+    <insert id="insertBusCaigouOrder" parameterType="BusCaigouOrder" useGeneratedKeys="true" keyProperty="id">
+        insert into bus_caigou_order
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="cgOrderNum != null  and cgOrderNum != ''">cg_order_num,</if>
+            <if test="providerId != null ">provider_id,</if>
+            <if test="cgDate != null ">cg_date,</if>
+            <if test="cgy != null  and cgy != ''">cgy,</if>
+            <if test="state != null ">state,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="cgOrderNum != null  and cgOrderNum != ''">#{cgOrderNum},</if>
+            <if test="providerId != null ">#{providerId},</if>
+            <if test="cgDate != null ">#{cgDate},</if>
+            <if test="cgy != null  and cgy != ''">#{cgy},</if>
+            <if test="state != null ">#{state},</if>
+         </trim>
+    </insert>
+
+    <update id="updateBusCaigouOrder" parameterType="BusCaigouOrder">
+        update bus_caigou_order
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="cgOrderNum != null  and cgOrderNum != ''">cg_order_num = #{cgOrderNum},</if>
+            <if test="providerId != null ">provider_id = #{providerId},</if>
+            <if test="cgDate != null ">cg_date = #{cgDate},</if>
+            <if test="cgy != null  and cgy != ''">cgy = #{cgy},</if>
+            <if test="state != null ">state = #{state},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteBusCaigouOrderById" parameterType="Long">
+        delete from bus_caigou_order where id = #{id}
+    </delete>
+
+    <delete id="deleteBusCaigouOrderByIds" parameterType="String">
+        delete from bus_caigou_order where id in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>
